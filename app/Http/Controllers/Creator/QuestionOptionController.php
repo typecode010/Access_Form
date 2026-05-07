@@ -8,6 +8,7 @@ use App\Http\Requests\Creator\UpdateOptionRequest;
 use App\Models\QuestionOption;
 use App\Models\Survey;
 use App\Models\SurveyQuestion;
+use App\Services\AccessibilityIssueDetector;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -31,6 +32,8 @@ class QuestionOptionController extends Controller
                 'position' => $targetPosition,
             ]);
         });
+
+        $this->refreshAccessibilityIssues($survey);
 
         return redirect()
             ->route('creator.surveys.questions.edit', [$survey, $question])
@@ -65,6 +68,8 @@ class QuestionOptionController extends Controller
             $option->save();
         });
 
+        $this->refreshAccessibilityIssues($survey);
+
         return redirect()
             ->route('creator.surveys.questions.edit', [$survey, $question])
             ->with('status', 'Option updated successfully.');
@@ -87,6 +92,8 @@ class QuestionOptionController extends Controller
             $option->delete();
             $this->normalizeOptionPositions($question);
         });
+
+        $this->refreshAccessibilityIssues($survey);
 
         return redirect()
             ->route('creator.surveys.questions.edit', [$survey, $question])
@@ -172,5 +179,10 @@ class QuestionOptionController extends Controller
                     $option->update(['position' => $newPosition]);
                 }
             });
+    }
+
+    private function refreshAccessibilityIssues(Survey $survey): void
+    {
+        app(AccessibilityIssueDetector::class)->detect($survey, true);
     }
 }

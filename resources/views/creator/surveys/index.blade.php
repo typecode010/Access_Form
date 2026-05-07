@@ -46,7 +46,12 @@
                             <td>
                                 <div class="d-flex flex-wrap gap-2">
                                     <a href="{{ route('creator.surveys.show', $survey) }}" class="btn btn-sm btn-outline-secondary">View</a>
+                                    <a href="{{ route('creator.surveys.accessibility.edit', $survey) }}" class="btn btn-sm btn-outline-success">Accessibility</a>
+                                    <a href="{{ route('creator.surveys.preview', $survey) }}" class="btn btn-sm btn-outline-success">Preview</a>
+                                    <a href="{{ route('creator.surveys.media.index', $survey) }}" class="btn btn-sm btn-outline-primary">Media</a>
                                     <a href="{{ route('creator.surveys.questions.index', $survey) }}" class="btn btn-sm btn-outline-dark">Questions</a>
+                                    <a href="{{ route('creator.surveys.responses.index', $survey) }}" class="btn btn-sm btn-outline-info">Responses</a>
+                                    <a href="{{ route('creator.surveys.analytics.show', $survey) }}" class="btn btn-sm btn-outline-info">Analytics</a>
                                     <a href="{{ route('creator.surveys.edit', $survey) }}" class="btn btn-sm btn-outline-primary">Edit</a>
 
                                     <form method="POST" action="{{ route('creator.surveys.destroy', $survey) }}" onsubmit="return confirm('Delete this survey?');">

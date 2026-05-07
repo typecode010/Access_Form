@@ -64,11 +64,12 @@
                                 class="form-control @error('option_text') is-invalid @enderror"
                                 value="{{ old('option_text') }}"
                                 required
-                                aria-describedby="option-text-help"
+                                aria-describedby="{{ trim('option-text-help '.($errors->has('option_text') ? 'option-text-error' : '')) }}"
+                                @error('option_text') aria-invalid="true" @enderror
                             >
                             <div id="option-text-help" class="form-text">Visible label for respondents.</div>
                             @error('option_text')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div id="option-text-error" class="invalid-feedback" role="alert">{{ $message }}</div>
                             @enderror
                         </div>
 
@@ -80,9 +81,10 @@
                                 name="option_value"
                                 class="form-control @error('option_value') is-invalid @enderror"
                                 value="{{ old('option_value') }}"
+                                @error('option_value') aria-invalid="true" @enderror
                             >
                             @error('option_value')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback" role="alert">{{ $message }}</div>
                             @enderror
                         </div>
 
@@ -95,9 +97,10 @@
                                 min="1"
                                 class="form-control @error('position') is-invalid @enderror"
                                 value="{{ old('position') }}"
+                                @error('position') aria-invalid="true" @enderror
                             >
                             @error('position')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback" role="alert">{{ $message }}</div>
                             @enderror
                         </div>
 

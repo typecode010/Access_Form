@@ -13,6 +13,8 @@
             crossorigin="anonymous"
         >
 
+        @vite(['resources/js/app.js'])
+
         <style>
             .skip-link {
                 left: 0.75rem;
@@ -28,6 +30,54 @@
             :focus-visible {
                 outline: 3px solid #ffbf47 !important;
                 outline-offset: 2px !important;
+            }
+
+            .preview-theme.theme-contrast {
+                background: #0b0b0b;
+                border-color: #f5f5f5;
+                color: #ffffff;
+            }
+
+            .preview-theme.theme-contrast .form-control,
+            .preview-theme.theme-contrast .form-select {
+                background: #111111;
+                border-color: #f5f5f5;
+                color: #ffffff;
+            }
+
+            .preview-theme.theme-contrast .form-check-input {
+                border-color: #f5f5f5;
+            }
+
+            .preview-theme.theme-contrast .text-muted {
+                color: #d9d9d9 !important;
+            }
+
+            .preview-theme.theme-dyslexia {
+                font-family: Arial, Verdana, Tahoma, sans-serif;
+                letter-spacing: 0.04em;
+                line-height: 1.6;
+            }
+
+            .preview-theme.text-size-sm {
+                font-size: 0.95rem;
+            }
+
+            .preview-theme.text-size-md {
+                font-size: 1rem;
+            }
+
+            .preview-theme.text-size-lg {
+                font-size: 1.125rem;
+            }
+
+            .preview-theme.reduced-motion *,
+            .preview-theme.reduced-motion *::before,
+            .preview-theme.reduced-motion *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.001ms !important;
             }
         </style>
     </head>
@@ -61,33 +111,93 @@
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         @if(auth()->user()->hasRole('Admin'))
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.dashboard') }}">Admin Dashboard</a>
+                                <a
+                                    class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                                    href="{{ route('admin.dashboard') }}"
+                                    @if (request()->routeIs('admin.dashboard')) aria-current="page" @endif
+                                >
+                                    Admin Dashboard
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.users.index') }}">Manage Users</a>
+                                <a
+                                    class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
+                                    href="{{ route('admin.users.index') }}"
+                                    @if (request()->routeIs('admin.users.*')) aria-current="page" @endif
+                                >
+                                    Manage Users
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link {{ request()->routeIs('admin.accessibility.issues.*') ? 'active' : '' }}"
+                                    href="{{ route('admin.accessibility.issues.index') }}"
+                                    @if (request()->routeIs('admin.accessibility.issues.*')) aria-current="page" @endif
+                                >
+                                    Accessibility Issues
+                                </a>
                             </li>
                         @endif
 
                         @if(auth()->user()->hasRole('FormCreator'))
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('creator.dashboard') }}">Creator Dashboard</a>
+                                <a
+                                    class="nav-link {{ request()->routeIs('creator.dashboard') ? 'active' : '' }}"
+                                    href="{{ route('creator.dashboard') }}"
+                                    @if (request()->routeIs('creator.dashboard')) aria-current="page" @endif
+                                >
+                                    Creator Dashboard
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('creator.surveys.index') }}">My Surveys</a>
+                                <a
+                                    class="nav-link {{ request()->routeIs('creator.surveys.*') ? 'active' : '' }}"
+                                    href="{{ route('creator.surveys.index') }}"
+                                    @if (request()->routeIs('creator.surveys.*')) aria-current="page" @endif
+                                >
+                                    My Surveys
+                                </a>
                             </li>
                         @endif
 
                         @if(auth()->user()->hasRole('Respondent'))
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('respondent.dashboard') }}">Respondent Dashboard</a>
+                                <a
+                                    class="nav-link {{ request()->routeIs('respondent.dashboard') ? 'active' : '' }}"
+                                    href="{{ route('respondent.dashboard') }}"
+                                    @if (request()->routeIs('respondent.dashboard')) aria-current="page" @endif
+                                >
+                                    Respondent Dashboard
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('respondent.surveys.index') }}">Available Surveys</a>
+                                <a
+                                    class="nav-link {{ request()->routeIs('respondent.surveys.*') ? 'active' : '' }}"
+                                    href="{{ route('respondent.surveys.index') }}"
+                                    @if (request()->routeIs('respondent.surveys.*')) aria-current="page" @endif
+                                >
+                                    Available Surveys
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link {{ request()->routeIs('respondent.submissions.*') ? 'active' : '' }}"
+                                    href="{{ route('respondent.submissions.index') }}"
+                                    @if (request()->routeIs('respondent.submissions.*')) aria-current="page" @endif
+                                >
+                                    My Submissions
+                                </a>
                             </li>
                         @endif
 
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('profile.edit') }}">Profile</a>
+                            <a
+                                class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}"
+                                href="{{ route('profile.edit') }}"
+                                @if (request()->routeIs('profile.edit')) aria-current="page" @endif
+                            >
+                                Profile
+                            </a>
                         </li>
                     </ul>
 

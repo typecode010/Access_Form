@@ -55,6 +55,14 @@ class SurveyQuestion extends Model
     }
 
     /**
+     * Accessibility issues linked to this question.
+     */
+    public function accessibilityIssues(): HasMany
+    {
+        return $this->hasMany(AccessibilityIssue::class, 'survey_question_id');
+    }
+
+    /**
      * Determine whether this question type requires options.
      */
     public function requiresOptions(): bool

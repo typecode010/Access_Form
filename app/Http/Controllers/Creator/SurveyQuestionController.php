@@ -8,6 +8,7 @@ use App\Http\Requests\Creator\StoreQuestionRequest;
 use App\Http\Requests\Creator\UpdateQuestionRequest;
 use App\Models\Survey;
 use App\Models\SurveyQuestion;
+use App\Services\AccessibilityIssueDetector;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -75,6 +76,8 @@ class SurveyQuestionController extends Controller
             ]);
         });
 
+        $this->refreshAccessibilityIssues($survey);
+
         return redirect()
             ->route('creator.surveys.questions.edit', [$survey, $question])
             ->with('status', 'Question created successfully.');
@@ -128,6 +131,8 @@ class SurveyQuestionController extends Controller
             $question->save();
         });
 
+        $this->refreshAccessibilityIssues($survey);
+
         return redirect()
             ->route('creator.surveys.questions.edit', [$survey, $question])
             ->with('status', 'Question updated successfully.');
@@ -144,6 +149,8 @@ class SurveyQuestionController extends Controller
             $question->delete();
             $this->normalizeQuestionPositions($survey);
         });
+
+        $this->refreshAccessibilityIssues($survey);
 
         return redirect()
             ->route('creator.surveys.questions.index', $survey)
@@ -168,6 +175,8 @@ class SurveyQuestionController extends Controller
                     ->update(['position' => $index + 1]);
             }
         });
+
+        $this->refreshAccessibilityIssues($survey);
 
         return redirect()
             ->route('creator.surveys.questions.index', $survey)
@@ -263,6 +272,11 @@ class SurveyQuestionController extends Controller
                     $question->update(['position' => $newPosition]);
                 }
             });
+    }
+
+    private function refreshAccessibilityIssues(Survey $survey): void
+    {
+        app(AccessibilityIssueDetector::class)->detect($survey, true);
     }
 
     /**

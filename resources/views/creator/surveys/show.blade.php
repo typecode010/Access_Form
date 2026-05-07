@@ -5,7 +5,12 @@
         <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
             <h2 id="page-title" class="h3 mb-0">{{ $pageTitle }}</h2>
             <div class="d-flex flex-wrap gap-2">
+                <a href="{{ route('creator.surveys.accessibility.edit', $survey) }}" class="btn btn-outline-success">Accessibility Settings</a>
+                <a href="{{ route('creator.surveys.media.index', $survey) }}" class="btn btn-outline-primary">Manage Media</a>
+                <a href="{{ route('creator.surveys.responses.index', $survey) }}" class="btn btn-outline-info">Responses</a>
+                <a href="{{ route('creator.surveys.analytics.show', $survey) }}" class="btn btn-outline-info">Analytics</a>
                 <a href="{{ route('creator.surveys.edit', $survey) }}" class="btn btn-outline-primary">Edit Survey</a>
+                <a href="{{ route('creator.surveys.preview', $survey) }}" class="btn btn-outline-success">Preview</a>
                 <a href="{{ route('creator.surveys.questions.index', $survey) }}" class="btn btn-primary">Question Builder</a>
                 <a href="{{ route('creator.surveys.index') }}" class="btn btn-outline-secondary">Back to Surveys</a>
             </div>

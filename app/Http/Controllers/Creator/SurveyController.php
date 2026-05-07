@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Creator;
 
 use App\Http\Controllers\Controller;
 use App\Models\Survey;
+use App\Models\SurveyAccessibilitySetting;
+use App\Models\SurveyQuestion;
+use App\Services\AccessibilityIssueDetector;
+use App\Services\AuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -59,6 +63,11 @@ class SurveyController extends Controller
             'public_slug' => $this->generateUniqueSlug($validated['title']),
         ]);
 
+        $this->logAudit('created_survey', $survey, [
+            'title' => $survey->title,
+            'status' => $survey->status,
+        ]);
+
         return redirect()
             ->route('creator.surveys.edit', $survey)
             ->with('status', 'Survey created successfully.');
@@ -75,6 +84,30 @@ class SurveyController extends Controller
             'pageTitle' => 'Survey Details',
             'roleName' => 'FormCreator',
             'survey' => $survey,
+        ]);
+    }
+
+    /**
+     * Preview the survey as a respondent.
+     */
+    public function preview(Survey $survey): View
+    {
+        $this->ensureSurveyOwnership($survey);
+
+        $survey->load(['questions.options', 'media']);
+
+        $settings = $survey->accessibilitySettings()
+            ->firstOrCreate([], SurveyAccessibilitySetting::defaults());
+
+        $survey->setRelation('accessibilitySettings', $settings);
+
+        return view('creator.surveys.preview', [
+            'pageTitle' => 'Survey Preview',
+            'roleName' => 'FormCreator',
+            'survey' => $survey,
+            'questions' => $survey->questions,
+            'settings' => $settings,
+            'checklist' => $this->buildAccessibilityChecklist($survey),
         ]);
     }
 
@@ -119,6 +152,11 @@ class SurveyController extends Controller
 
         $survey->save();
 
+        $this->logAudit('updated_survey', $survey, [
+            'title' => $survey->title,
+            'status' => $survey->status,
+        ]);
+
         return redirect()
             ->route('creator.surveys.edit', $survey)
             ->with('status', 'Survey updated successfully.');
@@ -130,6 +168,11 @@ class SurveyController extends Controller
     public function destroy(Survey $survey): RedirectResponse
     {
         $this->ensureSurveyOwnership($survey);
+
+        $this->logAudit('deleted_survey', $survey, [
+            'title' => $survey->title,
+            'status' => $survey->status,
+        ]);
         $survey->delete();
 
         return redirect()
@@ -167,5 +210,31 @@ class SurveyController extends Controller
         }
 
         return $slug;
+    }
+
+    /**
+     * Write an audit entry for survey actions.
+     *
+     * @param array<string, mixed> $context
+     */
+    private function logAudit(string $action, Survey $survey, array $context = []): void
+    {
+        app(AuditLogger::class)->log(auth()->user(), $action, $survey, $context);
+    }
+
+    /**
+     * Build a basic accessibility checklist for preview.
+     *
+     * @return array{hasIssues: bool, issues: array<int, string>}
+     */
+    private function buildAccessibilityChecklist(Survey $survey): array
+    {
+        $issueDetector = app(AccessibilityIssueDetector::class);
+        $issues = $issueDetector->detect($survey, true);
+
+        return [
+            'hasIssues' => count($issues) > 0,
+            'issues' => collect($issues)->pluck('message')->values()->all(),
+        ];
     }
 }
